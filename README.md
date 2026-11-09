@@ -1,5 +1,7 @@
 # 기록해요
 
+[![CI](https://github.com/DevJamJam/giroke-app/actions/workflows/ci.yml/badge.svg)](https://github.com/DevJamJam/giroke-app/actions/workflows/ci.yml)
+
 하루의 할 일·활동·일기를 기록하고 돌아보는 개인 기록 웹앱입니다. (개발 중)
 
 ## 기술 스택
