@@ -37,3 +37,5 @@ npm run dev
 - **pre-commit**: 커밋하는 JS/TS 파일만 ESLint 검사 (lint-staged, 경고 0개)
 - **commit-msg**: [Conventional Commits](https://www.conventionalcommits.org/) 형식 검사 (commitlint)
   - 예: `feat(daily): 할 일 이동 추가`, `fix: 날짜 경계 오류 수정`
+- **CI**: PR 제목과 PR의 모든 커밋을 commitlint로 다시 검사 (merge 커밋 포함)
+- **merge**: merge commit 방식만 허용, merge 커밋 제목 = `PR 제목 (#번호)` → PR 제목도 Conventional Commits 형식으로 작성
