@@ -45,6 +45,6 @@
     "commit-msg": "npx --no -- commitlint --edit \"$1\""
   },
   "lint-staged": {
-    "*.{js,mjs,cjs,ts,tsx}": "eslint --max-warnings=0"
+    "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}": "eslint --max-warnings=0"
   }
 }
