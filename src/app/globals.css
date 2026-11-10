@@ -1,26 +1,59 @@
 @import "tailwindcss";
 
+/* dark: 변형은 OS 설정이 아니라 사용자 선택(data-theme)을 따른다 */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* 기획서 22장 semantic token */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f7f7f5;
+  --surface: #ffffff;
+  --surface-subtle: #f1efe9;
+  --foreground: #232323;
+  --foreground-muted: #6f6f6f;
+  --border: #e7e4de;
+  --primary: #3f6f63;
+  --primary-soft: #e4efeb;
+  --accent: #c98b54;
+  --danger: #b85c5c;
 }
 
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #171a19;
+  --surface: #202422;
+  --surface-subtle: #292d2b;
+  --foreground: #f1f2ef;
+  --foreground-muted: #a8aeaa;
+  --border: #363c39;
+  --primary: #78ab9c;
+  --primary-soft: #263b35;
+  --accent: #d9a273;
+  --danger: #de7b7b;
+}
+
+/* 기본 palette를 지워 semantic token만 쓰게 한다 */
 @theme inline {
+  --color-*: initial;
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  --radius-*: initial;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --font-sans:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 }
