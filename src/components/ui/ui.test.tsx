@@ -22,6 +22,42 @@ describe("Button", () => {
     fireEvent.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();
   });
+
+  it("loading이면 중복 클릭을 막고 진행 중임을 알리며 이름은 유지한다", () => {
+    const onClick = vi.fn();
+    render(
+      <Button loading onClick={onClick}>
+        저장 중
+      </Button>,
+    );
+    const button = screen.getByRole("button", { name: "저장 중" });
+    fireEvent.click(button);
+    expect(onClick).not.toHaveBeenCalled();
+    expect(button.getAttribute("aria-busy")).toBe("true");
+    expect(button.getAttribute("aria-disabled")).toBe("true");
+  });
+
+  it("loading 중에는 포커스를 잃지 않도록 disabled 속성을 쓰지 않는다", () => {
+    const { rerender } = render(<Button>저장</Button>);
+    const button = screen.getByRole("button");
+    button.focus();
+    rerender(<Button loading>저장</Button>);
+    expect(button.hasAttribute("disabled")).toBe(false);
+    expect(document.activeElement).toBe(button);
+  });
+
+  it("loading인 submit 버튼은 form을 제출하지 않는다", () => {
+    const onSubmit = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+    render(
+      <form onSubmit={onSubmit}>
+        <Button type="submit" loading>
+          저장
+        </Button>
+      </form>,
+    );
+    fireEvent.click(screen.getByRole("button"));
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });
 
 describe("Input", () => {
