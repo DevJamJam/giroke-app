@@ -6,7 +6,7 @@ import { themeScript } from "@/lib/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "기록해요",
+  title: { default: "기록해요", template: "%s · 기록해요" },
   description: "오늘을 기록해요",
 };
 
