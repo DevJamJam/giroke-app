@@ -45,6 +45,8 @@
   --color-primary-soft: var(--primary-soft);
   --color-accent: var(--accent);
   --color-danger: var(--danger);
+  /* ::backdrop은 일부 브라우저에서 변수를 상속받지 못하므로 값을 바로 넣는다(Light·Dark 공통) */
+  --color-overlay: rgb(0 0 0 / 0.4);
 }
 
 @theme {
@@ -56,4 +58,9 @@
   --font-sans:
     "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
     system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+
+/* Modal이 열려 있는 동안 뒤 페이지가 스크롤되지 않게 한다 */
+html:has(dialog[open]) {
+  overflow: hidden;
 }
