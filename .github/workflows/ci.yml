@@ -33,6 +33,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      # DB·RLS 테스트(23장): 로컬 Postgres에 migration 적용 후 pgTAP 실행
+      - run: npx supabase db start
+      - run: npx supabase test db
       - run: npm run build
       - run: npm run build-storybook
         env:
