@@ -4,6 +4,8 @@ import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
 
 import { Toaster } from "@/components/ui/toast";
 import { themeScript } from "@/lib/theme";
+
+import { Providers } from "./providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +21,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        {children}
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>
