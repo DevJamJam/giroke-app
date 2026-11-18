@@ -1,4 +1,23 @@
-import { expect, test, type Page } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+
+import { expect, test, type Browser, type Page } from "@playwright/test";
+
+/** 해당 사용자의 살아 있는 세션(기기) 수: 로컬 Supabase DB 컨테이너에서 직접 센다 */
+function sessionCount(email: string) {
+  const sql = `select count(*) from auth.sessions s join auth.users u on u.id = s.user_id where u.email = '${email}'`;
+  const out = execFileSync("docker", ["exec", "supabase_db_giroke-app", "psql", "-U", "postgres", "-tAc", sql], { encoding: "utf8" });
+  return Number(out.trim());
+}
+
+async function loginInNewDevice(browser: Browser, email: string, password: string) {
+  const page = await (await browser.newContext()).newPage();
+  await page.goto("/login");
+  await page.getByLabel("이메일").fill(email);
+  await page.getByLabel("비밀번호").fill(password);
+  await page.getByRole("button", { name: "로그인" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  return page;
+}
 
 // 로컬 Supabase가 보낸 메일은 Mailpit(가짜 메일함)에 쌓인다
 const MAILPIT = "http://127.0.0.1:54324";
@@ -129,4 +148,31 @@ test("비밀번호 재설정: 코드 → 새 비밀번호, 이전 비밀번호�
   await page.getByLabel("비밀번호").fill("new-pass-2026");
   await page.getByRole("button", { name: "로그인" }).click();
   await expect(page).toHaveURL(/\/$/);
+});
+
+test("로그아웃은 이 기기만, 비밀번호를 바꾸면 다른 기기도 로그아웃(R-41)", async ({ page, browser }) => {
+  const email = uniqueEmail("devices");
+  await signUpAndVerify(page, email);
+  await onboard(page, "기기");
+  const other = await loginInNewDevice(browser, email, PASSWORD);
+  expect(sessionCount(email)).toBe(2);
+
+  // 다른 기기에서 로그아웃해도 이 기기는 그대로
+  await logout(other);
+  expect(sessionCount(email)).toBe(1);
+  await page.goto("/my");
+  await expect(page).toHaveURL(/\/my$/);
+
+  // 다시 두 기기 → 이 기기에서 재설정하면 다른 기기 세션은 끊기고 이 기기만 남는다
+  await loginInNewDevice(browser, email, PASSWORD);
+  expect(sessionCount(email)).toBe(2);
+  await logout(page);
+  await page.getByRole("link", { name: "비밀번호를 잊었어요" }).click();
+  await page.getByLabel("가입한 이메일").fill(email);
+  await page.getByRole("button", { name: "재설정 코드 받기" }).click();
+  await page.getByLabel("재설정 코드").fill(await latestCode(page, email, "비밀번호 재설정"));
+  await page.getByLabel("새 비밀번호").fill("devices-pass-2026");
+  await page.getByRole("button", { name: "비밀번호 바꾸기" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(sessionCount(email)).toBe(1);
 });

@@ -13,7 +13,8 @@ export function LogoutButton() {
   const queryClient = useQueryClient();
   const logout = useMutation({
     mutationFn: async () => {
-      const { error } = await getSupabase().auth.signOut();
+      // R-41: 로그아웃은 이 기기만 (다른 기기 세션은 유지)
+      const { error } = await getSupabase().auth.signOut({ scope: "local" });
       if (error) throw error;
     },
     onSuccess: () => {

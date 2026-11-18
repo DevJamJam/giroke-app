@@ -40,6 +40,9 @@ export default function ResetPage() {
       }
       const { error } = await getSupabase().auth.updateUser({ password });
       if (error) throw error;
+      // R-41: 비밀번호를 바꾸면 이 기기를 뺀 모든 기기에서 로그아웃
+      const { error: signOutError } = await getSupabase().auth.signOut({ scope: "others" });
+      if (signOutError) throw signOutError;
     },
     onSuccess: () => {
       toast("비밀번호를 바꿨어요.");
