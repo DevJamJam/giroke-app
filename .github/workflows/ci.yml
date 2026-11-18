@@ -16,7 +16,7 @@ jobs:
   check:
     name: lint · typecheck · test · build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
@@ -33,10 +33,21 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      # DB·RLS 테스트(23장): 로컬 Postgres에 migration 적용 후 pgTAP 실행
-      - run: npx supabase db start
-      - run: npx supabase test db
+      # 로컬 Supabase(23장, R-08): 인증 E2E에 필요한 컨테이너만 띄운다
+      - run: npx supabase start -x realtime,storage-api,imgproxy,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+      # DB·RLS 테스트: migration 적용 후 pgTAP 실행
+      - run: npm run test:db
+      - run: npm run env:local
       - run: npm run build
       - run: npm run build-storybook
         env:
           STORYBOOK_DISABLE_TELEMETRY: "1"
+      # 핵심 E2E(가입·인증·온보딩·로그인·재설정)
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results/
+          retention-days: 7
