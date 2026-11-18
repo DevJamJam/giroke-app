@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "prepare": "simple-git-hooks",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build --quiet"
+    "build-storybook": "storybook build --quiet",
+    "test:db": "supabase test db"
   },
   "dependencies": {
     "lucide-react": "1.71.0",
@@ -40,6 +41,7 @@
     "lint-staged": "17.6.0",
     "simple-git-hooks": "2.14.0",
     "storybook": "10.6.7",
+    "supabase": "3.1.0",
     "tailwindcss": "4.3.5",
     "typescript": "5.9.3",
     "vite": "8.3.7",
